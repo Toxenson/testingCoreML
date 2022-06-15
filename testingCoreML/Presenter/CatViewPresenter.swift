@@ -19,13 +19,23 @@ protocol CatViewPresenterOutput: AnyObject {
 class CatViewPresenter: NSObject, BasePresenter {
     weak var output: BaseController? {
         didSet {
-            configureModel()
+            performRequests()
         }
     }
     private var visionRequests: [VNRequest] = []
+    var mlModel: VNCoreMLModel?
+    
+    override init() {
+        super.init()
+        configureModel()
+    }
     
     private func configureModel() {
-        guard let mlModel = try? VNCoreMLModel(for: Inceptionv3().model) else {
+        mlModel = try? VNCoreMLModel(for: Inceptionv3().model)
+    }
+    
+    private func performRequests() {
+        guard let mlModel = mlModel else {
             return
         }
         
