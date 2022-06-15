@@ -15,6 +15,7 @@
 		CEDEADBE2859B4D0002239D1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CEDEADBC2859B4D0002239D1 /* LaunchScreen.storyboard */; };
 		CEDEADC62859B642002239D1 /* Inceptionv3.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = CEDEADC52859B642002239D1 /* Inceptionv3.mlmodel */; };
 		CEDEADCB2859B6C0002239D1 /* CatViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDEADCA2859B6C0002239D1 /* CatViewPresenter.swift */; };
+		CEDEADCD285A3BDF002239D1 /* AutoAlertsFabricPresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDEADCC285A3BDF002239D1 /* AutoAlertsFabricPresentable.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		CEDEADBF2859B4D0002239D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CEDEADC52859B642002239D1 /* Inceptionv3.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = Inceptionv3.mlmodel; sourceTree = "<group>"; };
 		CEDEADCA2859B6C0002239D1 /* CatViewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatViewPresenter.swift; sourceTree = "<group>"; };
+		CEDEADCC285A3BDF002239D1 /* AutoAlertsFabricPresentable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoAlertsFabricPresentable.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +87,7 @@
 			isa = PBXGroup;
 			children = (
 				CEDEADCA2859B6C0002239D1 /* CatViewPresenter.swift */,
+				CEDEADCC285A3BDF002239D1 /* AutoAlertsFabricPresentable.swift */,
 			);
 			path = Presenter;
 			sourceTree = "<group>";
@@ -172,6 +175,7 @@
 				CEDEADCB2859B6C0002239D1 /* CatViewPresenter.swift in Sources */,
 				CEDEADC62859B642002239D1 /* Inceptionv3.mlmodel in Sources */,
 				CEDEADB22859B4CD002239D1 /* AppDelegate.swift in Sources */,
+				CEDEADCD285A3BDF002239D1 /* AutoAlertsFabricPresentable.swift in Sources */,
 				CEDEADB42859B4CD002239D1 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -7,34 +7,38 @@
 
 import UIKit
 import AVFoundation
-import Vision
 
-protocol BaseController: AnyObject {
-    var presenter: BasePresenter? { get set }
+protocol BaseController: UIViewController {
+    var animal: String? { get set }
 }
 
 class CatViewController: UIViewController, BaseController {
     //MARK: - Properties
-    weak var presenter: BasePresenter?
-    private let mainView = UIView()
+    var presenter: BasePresenter?
+    private let mainView = UIImageView()
     private let mainCameraLayer = AVCaptureVideoPreviewLayer()
     private var session = AVCaptureSession()
     private let captureQueue = DispatchQueue(label: "captureQueue")
-    private var visionRequests: [VNRequest] = []
+    private let visionLabel = UILabel()
+    var animal: String? {
+        didSet {
+            visionLabel.text = animal
+        }
+    }
     
     
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         configureMainView()
-//        configureCameraVision()
-        testCamera()
+        configureCameraVision()
+        configureVisionLabel()
     }
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        layoutMainView()
         activateConstraints()
+        layoutMainView()
     }
 
     //MARK: - Configurations
@@ -43,32 +47,15 @@ class CatViewController: UIViewController, BaseController {
         view.addSubview(mainView)
     }
     
-    private func testCamera() {
-        let session = AVCaptureSession()
-        if let device = AVCaptureDevice.default(for: .video) {
-            do {
-            let input = try AVCaptureDeviceInput(device: device)
-                if session.canAddInput(input) {
-                    print("adding input")
-                    session.addInput(input)
-                }
-                let videoOut = AVCaptureVideoDataOutput()
-                if session.canAddOutput(videoOut) {
-                    print("adding output")
-                    session.addOutput(videoOut)
-                }
-                
-                mainCameraLayer.videoGravity = .resizeAspectFill
-                mainCameraLayer.session = session
-                mainCameraLayer.frame = mainView.frame
-                mainView.layer.insertSublayer(mainCameraLayer, at: 0)
-                
-                session.startRunning()
-                self.session = session
-        } catch {
-            fatalError("dsfsf")
-        }
-        }
+    private func configureVisionLabel() {
+        visionLabel.translatesAutoresizingMaskIntoConstraints = false
+        visionLabel.numberOfLines = 0
+        visionLabel.textColor = .white
+        visionLabel.textAlignment = .center
+        visionLabel.font = .boldSystemFont(ofSize: 20)
+        mainView.addSubview(visionLabel)
+        
+        visionLabel.text = "FUCK!!"
     }
     
     private func configureCameraVision() {
@@ -79,13 +66,15 @@ class CatViewController: UIViewController, BaseController {
             return
         }
         
+        mainCameraLayer.videoGravity = .resizeAspectFill
+        mainCameraLayer.frame = view.frame
         mainCameraLayer.session = session
         mainView.layer.addSublayer(mainCameraLayer)
         
         let cameraIn = try? AVCaptureDeviceInput(device: camera)
         
         let videoOut = AVCaptureVideoDataOutput()
-        videoOut.setSampleBufferDelegate(self, queue: captureQueue)
+        videoOut.setSampleBufferDelegate(presenter as? AVCaptureVideoDataOutputSampleBufferDelegate, queue: captureQueue)
         videoOut.alwaysDiscardsLateVideoFrames = true
         videoOut.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
         
@@ -108,8 +97,10 @@ class CatViewController: UIViewController, BaseController {
     //MARK: - Layout
     
     private func layoutMainView() {
-        mainView.backgroundColor = .clear
+        mainView.backgroundColor = .green
     }
+    
+    
     
     private func activateConstraints() {
         NSLayoutConstraint.activate(
@@ -118,6 +109,9 @@ class CatViewController: UIViewController, BaseController {
                 mainView.leftAnchor.constraint(equalTo: view.leftAnchor),
                 mainView.rightAnchor.constraint(equalTo: view.rightAnchor),
                 mainView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                
+                visionLabel.bottomAnchor.constraint(equalTo: mainView.bottomAnchor, constant: -view.safeAreaInsets.bottom),
+                visionLabel.centerXAnchor.constraint(equalTo: mainView.centerXAnchor)
             ]
         )
     }
@@ -127,22 +121,4 @@ class CatViewController: UIViewController, BaseController {
 }
 
 //MARK: - Extensions
-extension CatViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
-    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
-                    return
-                }
 
-                var requestOptions: [VNImageOption: Any] = [:]
-        if let cameraIntrinsicData = CMGetAttachment(sampleBuffer, key: kCMSampleBufferAttachmentKey_CameraIntrinsicMatrix, attachmentModeOut: nil) {
-                    requestOptions = [.cameraIntrinsics: cameraIntrinsicData]
-                }
-
-        let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .up, options: requestOptions)
-                do {
-                    try imageRequestHandler.perform(visionRequests)
-                } catch {
-                    print(error)
-                }
-    }
-}
